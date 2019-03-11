@@ -7,13 +7,14 @@ const char *prog = "-\\|//";
 
 int main(int argc , char **argv){
 	if(argc < 2){
-		printf("Usage: %s [FILE NAME] [OUTPUT FILE NAME]\n" , argv[0]);
+		printf("Usage: %s [FILE NAME] [OUTPUT FILE NAME]\n" , *argv);
 		return -1;
 	}
 
 	printl(info , "using '%s' as the data file." , argv[1]);
 	printl(info , "will be writing to '%s' with respect to the given data file." , argv[2]);
 	hwriter_t *writer = hwriter_create(argv[2]);
+
 	char buffer[100]; 
 	int pc = 0;
 	FILE *fp = NULL;

@@ -90,8 +90,7 @@ hwriter_t *hwriter_create(const char *filename){
 	fprintf(d->fp , "*/\n");
 	fprintf(d->fp , "#ifndef %s_H_INCLUDED\n" , include_guard);
 	fprintf(d->fp , "#define %s_H_INCLUDED\n" , include_guard);
-	fprintf(d->fp , "const char %s[] =\n" , include_guard);
-	fprintf(d->fp , "           { ");
+	fprintf(d->fp , "const char %s[]={" , include_guard);
 	free(include_guard);
 	printl(info , "finished writing boilerplate code.");
 	return d;
@@ -102,9 +101,9 @@ void hwriter_destroy(hwriter_t *writer){
 		return;
 
 	printl(info , "finalizing writing the header file.");	
-	fprintf(writer->fp , " 0x0 };\n");
+	fprintf(writer->fp , "0x0};\n");
 	fprintf(writer->fp , "#define FILESIZE %d\n" , writer->bytes_received);	
-	fprintf(writer->fp , "#endif\n");
+	fprintf(writer->fp , "#endif");
 	fclose(writer->fp);
 	free(writer);
 }
@@ -112,10 +111,7 @@ void hwriter_destroy(hwriter_t *writer){
 int hwriter_write_hex(hwriter_t *writer , const char *hex){
 	if(!writer || !hex)
 		return -1;
-	fprintf(writer->fp , " %s ," , hex);
-	if(!(writer->bytes_received % 8)){
-		fprintf(writer->fp , "\n            ");
-	}
+	fprintf(writer->fp , "%s," , hex);
 	++(writer->bytes_received);
 	return 0;
 }
