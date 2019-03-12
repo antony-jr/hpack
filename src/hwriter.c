@@ -7,44 +7,20 @@
 #include <stdio.h>
 #include <time.h>
 
-static char *get_include_guard(const char *filename){
-	size_t len = strlen(filename);
-	char *s = calloc(len + 1 , sizeof(char));
-	char *p = s;
-	if(!s)
-		return NULL;
-	if(!filename){
-		free(s);
+hwriter_t *hwriter_create(char *output , char *vn , char *hg){	
+	if(!vn || !hg){
+		printl(fatal , "no variable name and header guard given.");
 		return NULL;
 	}
-
-	while(*filename){
-		if(*filename >= 'a' && *filename <= 'z'){
-			*s++ = *filename - 32;
-		}else if(*filename >= 'A' && *filename <= 'Z'){
-			*s++ = *filename;
-		}else if(*filename == '.'){
-			break;	
-		}else{
-			*s++ = '_';
-		}
-		++filename;
-	}
-	return p;	
-}
-
-hwriter_t *hwriter_create(const char *filename){
-	
-	if(!filename){
-		printl(warning , "invalid file name given for construction of header writer.");
-		printl(fatal , "header writer construction aborted.");
-		return NULL;
+	if(!output){
+		printl(warning , "no output filename given. using 'hpack.out'.");
+		output = "hpack.out";
 	}
 
 	/* check file if the file exists and 
 	 * also check its permission to write and read. */
-	if(!access(filename , F_OK)){ /* 0 means it exists. */
-		printl(fatal , "%s exists in the filesystem , not instructed to overwrite." , filename);
+	if(!access(output , F_OK)){ /* 0 means it exists. */
+		printl(fatal , "%s exists in the filesystem , not instructed to overwrite." , output);
 		return NULL;
 	}
 
@@ -56,29 +32,26 @@ hwriter_t *hwriter_create(const char *filename){
 	time(&current_time);
 	time_info = localtime(&current_time);
 	strftime(time_string, sizeof(time_string), "%H:%M:%S", time_info);
-	
-	char *include_guard = NULL;
 	if(!d){
 		printl(fatal , "not enough memory to allocate header writer.");
 		return NULL;
 	}
+	d->output = output;
+	d->var_name = vn;
+	d->header= hg;
 
 	/* open header file. */
-	printl(info , "opening %s for writing." , filename);
-	if(!(d->fp = fopen(filename , "w"))){
-		printl(fatal , "cannot open %s for writing." , filename);
+	printl(info , "opening %s for writing." , output);
+	if(!(d->fp = fopen(output , "w"))){
+		printl(fatal , "cannot open %s for writing." , output);
 		free(d);
 		return NULL;
 	}
 
 	/* write boilerplate code with respect to the 
 	 * given filename.*/
-	if(!(include_guard = get_include_guard(filename))){
-		fclose(d->fp);
-		free(d);
-		return NULL;
-	}
-	printl(info , "using %s as the include guard and variable name." , include_guard);
+	printl(info , "using %s as the include guard." , hg);
+	printl(info , "using %s as the variable name which the data will be assigned.",vn);
 	
 	fprintf(d->fp , "/*\n");
 #ifdef GIT_VERSION_STR	
@@ -88,10 +61,9 @@ hwriter_t *hwriter_create(const char *filename){
 #endif
 	fprintf(d->fp , " * Created on %s.\n" , time_string);
 	fprintf(d->fp , "*/\n");
-	fprintf(d->fp , "#ifndef %s_H_INCLUDED\n" , include_guard);
-	fprintf(d->fp , "#define %s_H_INCLUDED\n" , include_guard);
-	fprintf(d->fp , "const char %s[]={" , include_guard);
-	free(include_guard);
+	fprintf(d->fp , "#ifndef %s_H_INCLUDED\n" , hg);
+	fprintf(d->fp , "#define %s_H_INCLUDED\n" , hg);
+	fprintf(d->fp , "const char %s[]={" , vn);
 	printl(info , "finished writing boilerplate code.");
 	return d;
 }
@@ -102,7 +74,8 @@ void hwriter_destroy(hwriter_t *writer){
 
 	printl(info , "finalizing writing the header file.");	
 	fprintf(writer->fp , "0x0};\n");
-	fprintf(writer->fp , "#define FILESIZE %d\n" , writer->bytes_received);	
+	fprintf(writer->fp , "#define %s_filesize %d\n" , writer->var_name,
+			writer->bytes_received);	
 	fprintf(writer->fp , "#endif");
 	fclose(writer->fp);
 	free(writer);
