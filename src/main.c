@@ -15,6 +15,9 @@ int main(int argc , char **argv){
 		return -1;
 	}
 
+	FILE *fp = NULL;
+	char *buffer = NULL;
+	hwriter_t *writer = NULL;
 	char *var_name = NULL,
              *head_guard = NULL,
 	     *output = NULL,
@@ -47,12 +50,10 @@ int main(int argc , char **argv){
 		}
 	}
 	
-	FILE *fp = NULL;
-	char *buffer = calloc((sizeof(char)*8) + 2 , sizeof(char));
-	hwriter_t *writer = hwriter_create(/*ouput file = */ output,
-			                   /* variable name = */ var_name,
-					   /* header guard name = */ head_guard);
-	
+	buffer = calloc((sizeof(char)*8) + 2 , sizeof(char));
+	writer = hwriter_create(/*ouput file = */ output,
+			        /* variable name = */ var_name,
+				/* header guard name = */ head_guard);
 	if(!writer){
 		printl(fatal , "cannot construct header writer.");
 		goto exit;
