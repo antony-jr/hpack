@@ -52,6 +52,7 @@ int main(int argc , char **argv){
 	hwriter_t *writer = hwriter_create(/*ouput file = */ output,
 			                   /* variable name = */ var_name,
 					   /* header guard name = */ head_guard);
+	
 	if(!writer){
 		printl(fatal , "cannot construct header writer.");
 		goto exit;
@@ -62,12 +63,20 @@ int main(int argc , char **argv){
 	}
 	printl(info , "started writing , please wait...");
 	while(!feof(fp)){
-		hwriter_write_hex(writer , char2hex(buffer , getc(fp)));
+		if(hwriter_write_hex(writer , char2hex(buffer , getc(fp)))){
+			printl(fatal , "write call to header file failed");
+			goto exit;
+		}
 	}
-	fclose(fp);
 	printl(info , "write finished successfully!");
 
         exit:
+		hwriter_destroy(writer , var_name);
+
+		if(buffer)
+			free(buffer);
+		if(fp)
+			fclose(fp);
 		if(output)
 			free(output);
 		if(input)
@@ -76,8 +85,6 @@ int main(int argc , char **argv){
 			free(var_name);
 		if(head_guard)
 			free(head_guard);
-		hwriter_destroy(writer);
-	
 	return 0;
 }
 

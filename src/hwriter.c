@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <time.h>
 
-hwriter_t *hwriter_create(char *output , char *vn , char *hg){	
+hwriter_t *hwriter_create(const char *output , const char *vn , const char *hg){	
 	if(!vn || !hg){
 		printl(fatal , "no variable name and header guard given.");
 		return NULL;
@@ -36,9 +36,6 @@ hwriter_t *hwriter_create(char *output , char *vn , char *hg){
 		printl(fatal , "not enough memory to allocate header writer.");
 		return NULL;
 	}
-	d->output = output;
-	d->var_name = vn;
-	d->header= hg;
 
 	/* open header file. */
 	printl(info , "opening %s for writing." , output);
@@ -68,13 +65,13 @@ hwriter_t *hwriter_create(char *output , char *vn , char *hg){
 	return d;
 }
 
-void hwriter_destroy(hwriter_t *writer){
+void hwriter_destroy(hwriter_t *writer , const char *var_name){
 	if(!writer)
 		return;
 
 	printl(info , "finalizing writing the header file.");	
 	fprintf(writer->fp , "0x0};\n");
-	fprintf(writer->fp , "#define %s_filesize %d\n" , writer->var_name,
+	fprintf(writer->fp , "#define %s_filesize %d\n" , var_name,
 			writer->bytes_received);	
 	fprintf(writer->fp , "#endif");
 	fclose(writer->fp);

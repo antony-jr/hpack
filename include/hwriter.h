@@ -4,14 +4,11 @@
 
 typedef struct {
 	FILE *fp;
-	char *var_name;
-	char *header;
-	char *output;
 	int bytes_received;
 } hwriter_t;
 
-hwriter_t *hwriter_create(char*,char*,char*);
-void hwriter_destroy(hwriter_t *);
+hwriter_t *hwriter_create(const char*,const char*,const char*);
+void hwriter_destroy(hwriter_t * , const char*);
 
 int hwriter_write_hex(hwriter_t * , const char *);
 
