@@ -6,6 +6,8 @@
 #include <string.h>
 
 int main(int argc , char **argv){
+	printf("Hpack , a fine tool to convert any file into a C header file\n");
+	printf("Copyright (C) 2019 Antony J.r.\n\n");
 	if(argc < 2){
 		printf("Usage: %s [INPUT FILEPATH] [OPTIONS]\n" , *argv);
 		printf("\nOPTIONS: \n");
