@@ -16,4 +16,7 @@ include_directories(include)
 
 add_executable(hpack include/char2hex.h include/logger.h include/hwriter.h src/char2hex.c src/logger.c src/hwriter.c src/main.c)
 target_include_directories(hpack PUBLIC . include)
-install(TARGETS hpack)
+install(
+	TARGETS hpack
+	RUNTIME DESTINATION bin
+)
