@@ -6,6 +6,10 @@ Useful if you want to store some data into your executable.
 **Warning** : The resulting header file size will be your original file size multiplied by **4.4** KiB which can be quite huge. However no useless data is added to the array.
 Therefore be mindful on what files you pack into your header.
 
+# AppImage Support
+
+You can download the latest appimage from releases.
+
 # Installation
 
 ```
