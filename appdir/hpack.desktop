@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=hpack
+Exec=hpack
+Comment=A fine tool to convert any data into C header
+Icon=hpack
+Categories=Development;
+Terminal=true
+
+X-AppImage-Version=04ad767
