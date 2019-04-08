@@ -17,13 +17,6 @@ hwriter_t *hwriter_create(const char *output , const char *vn , const char *hg){
 		output = "hpack.out";
 	}
 
-	/* check file if the file exists and 
-	 * also check its permission to write and read. */
-	if(!access(output , F_OK)){ /* 0 means it exists. */
-		printl(fatal , "%s exists in the filesystem , not instructed to overwrite." , output);
-		return NULL;
-	}
-
 	printl(info , "started writing packed header file.");
 	hwriter_t *d = calloc(1 , sizeof(hwriter_t));
 	time_t current_time;
