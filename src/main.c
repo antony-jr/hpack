@@ -17,6 +17,7 @@ int main(int argc , char **argv){
 		return -1;
 	}
 
+	int c = 0;
 	FILE *fp = NULL;
 	char *buffer = NULL;
 	hwriter_t *writer = NULL;
@@ -65,8 +66,8 @@ int main(int argc , char **argv){
 		goto exit;
 	}
 	printl(info , "started writing , please wait...");
-	while(!feof(fp)){
-		if(hwriter_write_hex(writer , char2hex(buffer , getc(fp)))){
+	while((c = getc(fp)) != EOF){
+		if(hwriter_write_hex(writer , char2hex(buffer , c))){
 			printl(fatal , "write call to header file failed");
 			goto exit;
 		}

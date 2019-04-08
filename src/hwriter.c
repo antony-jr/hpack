@@ -70,7 +70,11 @@ void hwriter_destroy(hwriter_t *writer , const char *var_name){
 		return;
 
 	printl(info , "finalizing writing the header file.");	
-	fprintf(writer->fp , "\b};\n");
+	if(ftell(writer->fp) > 0){
+		fseek(writer->fp , ftell(writer->fp) - 1 , SEEK_SET);
+	}
+
+	fprintf(writer->fp , "};\n");
 	fprintf(writer->fp , "#define %s_filesize %d\n" , var_name,
 			writer->bytes_received);	
 	fprintf(writer->fp , "#endif");
