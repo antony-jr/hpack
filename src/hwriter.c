@@ -53,7 +53,7 @@ hwriter_t *hwriter_create(const char *output , const char *vn , const char *hg){
 	fprintf(d->fp , "*/\n");
 	fprintf(d->fp , "#ifndef %s_H_INCLUDED\n" , hg);
 	fprintf(d->fp , "#define %s_H_INCLUDED\n" , hg);
-	fprintf(d->fp , "const char %s[]={" , vn);
+	fprintf(d->fp , "const char *%s=\"" , vn);
 	printl(info , "finished writing boilerplate code.");
 	return d;
 }
@@ -67,7 +67,7 @@ void hwriter_destroy(hwriter_t *writer , const char *var_name){
 		fseek(writer->fp , ftell(writer->fp) - 1 , SEEK_SET);
 	}
 
-	fprintf(writer->fp , "};\n");
+	fprintf(writer->fp , "\";\n");
 	fprintf(writer->fp , "#define %s_filesize %d\n" , var_name,
 			writer->bytes_received);	
 	fprintf(writer->fp , "#endif");
@@ -78,7 +78,7 @@ void hwriter_destroy(hwriter_t *writer , const char *var_name){
 int hwriter_write_hex(hwriter_t *writer , const char *hex){
 	if(!writer || !hex)
 		return -1;
-	fprintf(writer->fp , "%s," , hex);
+	fprintf(writer->fp , "\\x%s" , hex);
 	++(writer->bytes_received);
 	return 0;
 }

@@ -12,7 +12,5 @@ char *char2hex(char *buf , char c){
 		*(--p) = (c >> i) & 15;
 		*p += (*p < 10) ? '0' : ('A' - 10);
 	}while((i+=4) < (sizeof(c)*8));
-	*(--p) = 'x';
-	*(--p) = '0';
 	return p;
 }
